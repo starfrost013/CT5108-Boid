@@ -15,14 +15,30 @@ ABoidObject::ABoidObject()
 	// get a basic unreal static mesh
 	UStaticMesh* sphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.sphere'")).Object;
 	mesh->SetStaticMesh(sphereMesh);
+	mesh->SetSimulatePhysics(true);
 
 	this->SetRootComponent(mesh);
 }
 
-void ABoidObject::UpdateBoid(float deltaTime)
-{
 
+void ABoidObject::UpdateBoid(float deltaTime, FVector targetPosition)
+{
+	// Initially, utilise
 	// test
+
+	FVector velocity;
+
+	switch (steer)
+	{
+		case BoidSteeringBehaviour::Seek:
+			velocity = targetPosition - GetActorLocation();
+			break;	
+		case BoidSteeringBehaviour::Flee:
+			velocity = GetActorLocation() - targetPosition;
+			break;
+	}
+
+	mesh->AddImpulse(velocity);
 }
 
 // Called when the game starts or when spawned

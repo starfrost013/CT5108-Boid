@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ABoidManager();
 	virtual void Tick(float DeltaTime) override;
-
+	ABoidObject* FindNearestBoid(FVector position);
 	USceneComponent* transform;
 
 protected:
@@ -24,6 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+
 	struct BoidInitialisationData
 	{
 		uint32_t count;
@@ -31,5 +33,6 @@ private:
 		TArray<ABoidObject*> boids;
 	};
 
+	ABoidObject* target; 
 	BoidInitialisationData initData;
 };
