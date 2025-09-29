@@ -35,20 +35,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// i am not sure this is a good ideas
-	void UpdateBoid(float deltaTime, FVector targetPosition);
+	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
 
 	bool target;											// The subject of the steering behaviour.
 	//FVector velocity;
 	BoidFlockingBehaviour flock;
 	BoidSteeringBehaviour steer;
+	float flockRange;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 
 private:
-
 	UStaticMeshComponent* mesh;
 
 };

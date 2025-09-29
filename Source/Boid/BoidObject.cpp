@@ -21,20 +21,28 @@ ABoidObject::ABoidObject()
 }
 
 
-void ABoidObject::UpdateBoid(float deltaTime, FVector targetPosition)
+void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 {
 	// Initially, utilise
 	// test
 
 	FVector velocity;
+	FVector targetLocation = targetObj->GetActorLocation();
 
 	switch (steer)
 	{
 		case BoidSteeringBehaviour::Seek:
-			velocity = targetPosition - GetActorLocation();
+			velocity = targetLocation - GetActorLocation();
 			break;	
 		case BoidSteeringBehaviour::Flee:
-			velocity = GetActorLocation() - targetPosition;
+			velocity = GetActorLocation() - targetLocation;
+			break;
+		case BoidSteeringBehaviour::Pursue:
+			// try to use it
+			velocity = targetObj->GetVelocity(); //TODO: make parameter
+			break;	
+		case BoidSteeringBehaviour::Evade:
+			velocity = -targetObj->GetVelocity();
 			break;
 	}
 

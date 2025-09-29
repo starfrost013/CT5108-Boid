@@ -40,7 +40,6 @@ void ABoidManager::BeginPlay()
 	target = initData.boids[0];
 	initData.boids[0]->target = true;
 }
-
 ABoidObject* ABoidManager::FindNearestBoid(FVector position)
 {
 	float currentMinimumDistance = 1e+30;
@@ -71,8 +70,7 @@ void ABoidManager::Tick(float DeltaTime)
 
 	for (auto boid : initData.boids)
 	{
-		boid->UpdateBoid(DeltaTime, target->GetActorLocation()); // change to arbitrary position/
+		boid->UpdateBoid(DeltaTime, target); // change to arbitrary position/
 	}
-
 }
 

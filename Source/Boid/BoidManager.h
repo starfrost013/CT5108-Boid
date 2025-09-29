@@ -33,6 +33,6 @@ private:
 		TArray<ABoidObject*> boids;
 	};
 
-	ABoidObject* target; 
+	ABoidObject* target;				// The current tagged boid
 	BoidInitialisationData initData;
 };
