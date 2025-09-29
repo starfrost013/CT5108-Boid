@@ -9,8 +9,6 @@ ABoidManager::ABoidManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	initData.count = 1000;
-	initData.radius = 1024.0f;
 
 	transform = CreateDefaultSubobject<USceneComponent>("Root Scene Component");
 	this->SetRootComponent(transform);
@@ -21,6 +19,15 @@ void ABoidManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (BoidCount <= 0)
+		BoidCount = 1024;
+
+	if (BoidSpawnRadius <= 0)
+		BoidSpawnRadius = 1024.0f;
+
+	initData.count = BoidCount;
+	initData.radius = BoidSpawnRadius;
+
 	for (uint32_t i = 0; i < initData.count; i++)
 	{
 		FVector spawnLocation = FMath::VRand() * initData.radius;
@@ -29,8 +36,8 @@ void ABoidManager::BeginPlay()
 		// see what this basic version does
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
 		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(spawnLocation, spawnRotation);
-		object->steer = ABoidObject::BoidSteeringBehaviour::Flee;
-
+		object->steer = ABoidObject::BoidSteeringBehaviour::Seek;
+		
 		// faster to statically allocate?
 		initData.boids.Add(object);
 
@@ -40,6 +47,7 @@ void ABoidManager::BeginPlay()
 	target = initData.boids[0];
 	initData.boids[0]->target = true;
 }
+
 ABoidObject* ABoidManager::FindNearestBoid(FVector position)
 {
 	float currentMinimumDistance = 1e+30;
@@ -53,7 +61,7 @@ ABoidObject* ABoidManager::FindNearestBoid(FVector position)
 
 		// ignore zero	
 		if (linearDistance != 0.0f
-			&& linearDistance > currentMinimumDistance)
+			&& linearDistance < currentMinimumDistance)
 		{
 			currentMinimumDistance = linearDistance;
 			closestBoid = boid;
@@ -63,6 +71,29 @@ ABoidObject* ABoidManager::FindNearestBoid(FVector position)
 	return closestBoid; 
 }
 
+TArray<ABoidObject*> ABoidManager::GetBoidsWithinRange(ABoidObject* boid, float range)
+{
+	// this is a terrible way of doing this
+	TArray<ABoidObject*> neighbours;
+
+	// don't bother iterating if there is nothing there
+	if (range == 0.0f)
+		return neighbours;
+
+	for (auto currentBoid : initData.boids)
+	{
+		if (currentBoid == boid)
+			continue;
+
+		float distanceBetweenBoids = (currentBoid->GetActorLocation() - boid->GetActorLocation()).Size();
+
+		if (distanceBetweenBoids < range)
+			neighbours.Add(currentBoid);
+	}
+
+	return neighbours; 
+}
+
 // Called every frame
 void ABoidManager::Tick(float DeltaTime)
 {
@@ -70,7 +101,9 @@ void ABoidManager::Tick(float DeltaTime)
 
 	for (auto boid : initData.boids)
 	{
-		boid->UpdateBoid(DeltaTime, target); // change to arbitrary position/
+		// I'm not sure if this will acutally owrk since it could be removed during its updateboid function
+			
+		boid->UpdateBoid(DeltaTime, FindNearestBoid(GetActorLocation())); // change to arbitrary position/
 	}
 }
 

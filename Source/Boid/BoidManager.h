@@ -17,6 +17,28 @@ public:
 	ABoidManager();
 	virtual void Tick(float DeltaTime) override;
 	ABoidObject* FindNearestBoid(FVector position);
+	// apply to target to get flock
+	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
+
+	// Simulation properties
+	// These are not really directly used but are instead transferred into the actual simulation (NOTE: STDINT types cannot be used as UProperties!) 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	int BoidCount;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float BoidSpawnRadius;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")	
+	float AlignmentWeight;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float CohesionWeight;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float SeparationWeight;
+
+
+
 	USceneComponent* transform;
 
 protected:
@@ -24,7 +46,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
 
 	struct BoidInitialisationData
 	{

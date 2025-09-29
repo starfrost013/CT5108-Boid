@@ -32,16 +32,26 @@ public:
 		Other = 2,
 	};
 
+	struct BoidWeights
+	{
+		float alignment;
+		float cohesion;
+		float separation; 
+	};
+
 	virtual void Tick(float DeltaTime) override;
 
 	// i am not sure this is a good ideas
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
+	void Steer(float deltaTime, ABoidObject* targetObj);
 
 	bool target;											// The subject of the steering behaviour.
 	//FVector velocity;
 	BoidFlockingBehaviour flock;
 	BoidSteeringBehaviour steer;
+	BoidWeights weights; 
 	float flockRange;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,5 +59,6 @@ protected:
 
 private:
 	UStaticMeshComponent* mesh;
+	FVector targetVelocity;
 
 };

@@ -20,33 +20,48 @@ ABoidObject::ABoidObject()
 	this->SetRootComponent(mesh);
 }
 
+void ABoidObject::Steer(float deltaTime, ABoidObject* targetObj)
+{
+	FVector targetLocation = targetObj->GetActorLocation();
+
+	switch (steer)
+	{
+		case BoidSteeringBehaviour::Seek:
+			targetVelocity = targetLocation - GetActorLocation();
+			break;
+		case BoidSteeringBehaviour::Flee:
+			targetVelocity = GetActorLocation() - targetLocation;
+			break;
+		case BoidSteeringBehaviour::Pursue:
+			// try to use it
+			targetVelocity = targetObj->GetVelocity(); //TODO: make parameter
+			break;
+		case BoidSteeringBehaviour::Evade:
+			targetVelocity = -targetObj->GetVelocity();
+			break;
+	}
+
+	targetVelocity.Normalize();
+	targetVelocity *= deltaTime;
+
+}
 
 void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 {
 	// Initially, utilise
 	// test
 
-	FVector velocity;
-	FVector targetLocation = targetObj->GetActorLocation();
+	// Steer for this frame with deltatime applied
+	if (target)
+		steer = BoidSteeringBehaviour::Seek;
+	else
+		steer = BoidSteeringBehaviour::Flee;
+	
+	Steer(deltaTime, targetObj);
 
-	switch (steer)
-	{
-		case BoidSteeringBehaviour::Seek:
-			velocity = targetLocation - GetActorLocation();
-			break;	
-		case BoidSteeringBehaviour::Flee:
-			velocity = GetActorLocation() - targetLocation;
-			break;
-		case BoidSteeringBehaviour::Pursue:
-			// try to use it
-			velocity = targetObj->GetVelocity(); //TODO: make parameter
-			break;	
-		case BoidSteeringBehaviour::Evade:
-			velocity = -targetObj->GetVelocity();
-			break;
-	}
 
-	mesh->AddImpulse(velocity);
+	mesh->AddImpulse(targetVelocity);
+
 }
 
 // Called when the game starts or when spawned
