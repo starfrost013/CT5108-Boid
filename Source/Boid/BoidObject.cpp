@@ -46,6 +46,14 @@ void ABoidObject::Steer(float deltaTime, FVector startPosition)
 
 }
 
+void ABoidObject::Flock(float deltaTime, FVector startPosition)
+{
+	switch (flockingBehaviourType)
+	{
+
+	}
+}
+
 void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 {
 	// Initially, utilise

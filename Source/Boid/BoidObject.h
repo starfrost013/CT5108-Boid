@@ -43,7 +43,7 @@ public:
 
 	// i am not sure this is a good ideas
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
-	void Steer(float deltaTime, ABoidObject* targetObj);
+	void Steer(float deltaTime, FVector startPosition);
 	void Flock(float deltaTime, FVector startPosition);
 
 	bool target;											// The subject of the steering behaviour.
