@@ -20,11 +20,11 @@ ABoidObject::ABoidObject()
 	this->SetRootComponent(mesh);
 }
 
-void ABoidObject::Steer(float deltaTime, ABoidObject* targetObj)
+void ABoidObject::Steer(float deltaTime, FVector startPosition)
 {
 	FVector targetLocation = targetObj->GetActorLocation();
 
-	switch (steer)
+	switch (steeringBehaviourType)
 	{
 		case BoidSteeringBehaviour::Seek:
 			targetVelocity = targetLocation - GetActorLocation();
@@ -53,9 +53,9 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 	// Steer for this frame with deltatime applied
 	if (target)
-		steer = BoidSteeringBehaviour::Seek;
+		steeringBehaviourType = BoidSteeringBehaviour::Seek;
 	else
-		steer = BoidSteeringBehaviour::Flee;
+		steeringBehaviourType = BoidSteeringBehaviour::Flee;
 	
 	Steer(deltaTime, targetObj);
 

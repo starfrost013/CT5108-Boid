@@ -36,7 +36,7 @@ void ABoidManager::BeginPlay()
 		// see what this basic version does
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
 		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(spawnLocation, spawnRotation);
-		object->steer = ABoidObject::BoidSteeringBehaviour::Seek;
+		object->steeringBehaviourType = ABoidObject::BoidSteeringBehaviour::Seek;
 		
 		// faster to statically allocate?
 		initData.boids.Add(object);

@@ -37,7 +37,14 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float SeparationWeight;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float FlockingBehaviourRadius;
 
+	// 0 = No Physics
+	// 1 = Physics no gravity
+	// 2 = Physics w/Gravity
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	int PhysicsType;
 
 	USceneComponent* transform;
 
