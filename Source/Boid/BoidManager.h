@@ -42,7 +42,7 @@ public:
 
 	// 0 = No Physics
 	// 1 = Physics no gravity
-	// 2 = Physics w/Gravity (Doesn't make sense for this not to be simwide)
+	// 2 = Physics w/Gravity (Doesn't make sense for this not to be sim-wide)
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int PhysicsType;
 
