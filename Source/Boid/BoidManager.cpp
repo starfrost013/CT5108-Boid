@@ -36,8 +36,15 @@ void ABoidManager::BeginPlay()
 		// see what this basic version does
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
 		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(spawnLocation, spawnRotation);
+		object->manager = this;
 		object->steeringBehaviourType = ABoidObject::BoidSteeringBehaviour::Seek;
-		
+		object->weights.alignment = AlignmentWeight;
+		object->weights.cohesion = CohesionWeight;
+		object->weights.separation = SeparationWeight;
+
+		// we're done so set the physics type
+		object->SetPhysicsType();
+
 		// faster to statically allocate?
 		initData.boids.Add(object);
 

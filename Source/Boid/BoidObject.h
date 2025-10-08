@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BoidObject.generated.h"
 
+class ABoidManager;
+
 UCLASS()
 class BOID_API ABoidObject : public AActor
 {
@@ -27,9 +29,9 @@ public:
 
 	enum BoidFlockingBehaviour
 	{
-		Path = 0,
-		Wall = 1,
-		Other = 2,
+		Alignment = 0,
+		Cohere = 1,
+		Separate = 2,
 	};
 
 	struct BoidWeights
@@ -45,6 +47,7 @@ public:
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
 	void Steer(float deltaTime, FVector startPosition);
 	void Flock(float deltaTime, FVector startPosition);
+	void SetPhysicsType();
 
 	bool target;											// The subject of the steering behaviour.
 	//FVector velocity;
@@ -53,6 +56,7 @@ public:
 	BoidWeights weights; 
 	float flockRange;
 
+	ABoidManager* manager;									// Set during spawn
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,6 +64,7 @@ protected:
 
 private:
 	UStaticMeshComponent* mesh;
+	FVector currentVelocity;
 	FVector targetVelocity;
 
 };
