@@ -45,9 +45,10 @@ public:
 
 	// i am not sure this is a good ideas
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
-	void Steer(float deltaTime, FVector startPosition);
-	void Flock(float deltaTime, FVector startPosition);
+	FVector Steer(float deltaTime, FVector startPosition);
+	FVector Flock(float deltaTime, TArray<ABoidObject*> neighbours);
 	void SetPhysicsType();
+
 
 	bool target;											// The subject of the steering behaviour.
 	//FVector velocity;

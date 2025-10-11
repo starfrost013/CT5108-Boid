@@ -46,10 +46,10 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int PhysicsType;
 
-	constexpr int32_t PHYSICS_TYPE_NONE = 0;
-	constexpr int32_t PHYSICS_TYPE_PHYS_NOGRAV = 1;
-	constexpr int32_t PHYSICS_TYPE_PHYS_FULL = 2;
-
+	// better than defines
+	const int32_t PHYSICS_TYPE_NONE = 0;
+	const int32_t PHYSICS_TYPE_PHYS_NOGRAV = 1;
+	const int32_t PHYSICS_TYPE_PHYS_FULL = 2;
 
 	USceneComponent* transform;
 

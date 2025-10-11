@@ -19,43 +19,74 @@ ABoidObject::ABoidObject()
 	this->SetRootComponent(mesh);
 }
 
-void ABoidObject::Steer(float deltaTime, FVector startPosition)
+FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
 {
 	FVector targetLocation = startPosition;
+	FVector newCurrentVelocity; 
 
 	switch (steeringBehaviourType)
 	{
 		case BoidSteeringBehaviour::Seek:
-			targetVelocity = targetLocation - startPosition;
+			newCurrentVelocity = targetLocation - startPosition;
 			break;
 		case BoidSteeringBehaviour::Flee:
-			targetVelocity = startPosition - targetLocation;
+			newCurrentVelocity = startPosition - targetLocation;
 			break;
 		case BoidSteeringBehaviour::Pursue:
 			// try to use it
-			targetVelocity = startPosition; //TODO: make parameter
+			newCurrentVelocity = startPosition; //TODO: make parameter
 			break;
 		case BoidSteeringBehaviour::Evade:
-			targetVelocity = -startPosition;
+			newCurrentVelocity = -startPosition;
 			break;
 	}
 
-	targetVelocity.Normalize();
-	targetVelocity *= deltaTime;
+	newCurrentVelocity.Normalize();
+	newCurrentVelocity *= deltaTime;
 
+	return newCurrentVelocity;
 }
 
-void ABoidObject::Flock(float deltaTime, FVector startPosition)
+FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 {
+	FVector currentFlockVel = FVector(), averageLocation = FVector();
+
+	uint32_t numNeighbours = neighbours.Num();
+
+	if (!numNeighbours)
+		return currentFlockVel;
+
 	switch (flockingBehaviourType)
 	{
 		case BoidFlockingBehaviour::Alignment:
+			for (ABoidObject* boid : neighbours)
+				currentFlockVel += boid->currentVelocity;
+
+			currentFlockVel /= numNeighbours;
 			break;
 		case BoidFlockingBehaviour::Cohere:
+			for (ABoidObject* boid : neighbours)
+				currentFlockVel += boid->GetActorLocation();
+
+			averageLocation /= numNeighbours;
+
+			steeringBehaviourType = BoidSteeringBehaviour::Seek;
+			Steer(deltaTime, averageLocation);
+			// additional cohere steps
 			break;
 		case BoidFlockingBehaviour::Separate:
+			for (ABoidObject* boid : neighbours)
+			{
+				steeringBehaviourType = BoidSteeringBehaviour::Flee;
+				currentFlockVel += Steer(deltaTime, boid->GetActorLocation());
+			}
+
+			currentFlockVel /= numNeighbours;
 			break;
 	}
+
+	currentFlockVel.Normalize();
+	return currentFlockVel;
 }
 
 void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
@@ -64,20 +95,16 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	// test
 
 	// Steer for this frame with deltatime applied
-	if (target)
-		steeringBehaviourType = BoidSteeringBehaviour::Seek;
-	else
-		steeringBehaviourType = BoidSteeringBehaviour::Flee;
-	
+
 	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
-	Flock(deltaTime, targetObj->GetActorLocation());
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
 	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
-	Flock(deltaTime, targetObj->GetActorLocation());
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
 	flockingBehaviourType = BoidFlockingBehaviour::Separate;
-	Flock(deltaTime, targetObj->GetActorLocation());
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
-		SetActorLocation(GetActorLocation() + targetVelocity); // todo: split targetVelocity
+		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); // todo: split targetVelocity
 	else
 		mesh->AddImpulse(targetVelocity);
 
@@ -93,7 +120,6 @@ void ABoidObject::SetPhysicsType()
 			mesh->SetEnableGravity(false);
 	}
 }
-
 
 // Called when the game starts or when spawned
 void ABoidObject::BeginPlay()
