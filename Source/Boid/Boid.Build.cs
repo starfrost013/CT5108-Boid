@@ -13,7 +13,7 @@ public class Boid : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
         // DEBUG only so that Visual Studio does not optimise away half of the variables awe are trying to view in the debugger!S
-        OptimizeCode = CodeOptimization.InShippingBuildsOnly;
+        //OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

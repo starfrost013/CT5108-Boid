@@ -50,7 +50,7 @@ void ABoidManager::BeginPlay()
 
 		// see what this basic version does
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
-		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(spawnLocation, spawnRotation);
+		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(boidBP, spawnLocation, spawnRotation);
 		object->manager = this;
 		object->steeringBehaviourType = ABoidObject::BoidSteeringBehaviour::Seek;
 		object->weights.alignment = AlignmentWeight;

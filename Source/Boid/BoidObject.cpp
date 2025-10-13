@@ -13,10 +13,10 @@ ABoidObject::ABoidObject()
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoidSphere"));
 
 	// get a basic unreal static mesh
-	UStaticMesh* sphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.sphere'")).Object;
+	/*UStaticMesh* sphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Content/Models/squirrel/StaticMeshes/Squirrel.uasset'")).Object;
 	mesh->SetStaticMesh(sphereMesh);
 
-	this->SetRootComponent(mesh);
+	this->SetRootComponent(mesh);*/
 }
 
 FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
@@ -96,17 +96,22 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 	// Steer for this frame with deltatime applied
 
-	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
+	flockingBehaviourType = BoidFlockingBehaviour::Separate;
+	targetVelocity = Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
+
 	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
 	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->CohesionWeight;
-	flockingBehaviourType = BoidFlockingBehaviour::Separate;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
+
+	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
+
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
 		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); 
 	else
 		mesh->AddImpulse(targetVelocity);
+
+	SetActorRotation(targetVelocity.Rotation());
 
 	currentVelocity = targetVelocity; 
 }

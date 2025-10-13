@@ -20,6 +20,11 @@ public:
 	// apply to target to get flock
 	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
 
+
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	UClass* boidBP;
+
 	// Simulation properties
 	// These are not really directly used but are instead transferred into the actual simulation (NOTE: STDINT types cannot be used as UProperties!) 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
