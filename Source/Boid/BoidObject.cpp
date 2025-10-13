@@ -116,6 +116,11 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	currentVelocity = targetVelocity; 
 }
 
+void ABoidObject::Wander(float deltaTime, FVector wanderRange)
+{
+
+}
+
 void ABoidObject::SetPhysicsType()
 {
 	if (manager->PhysicsType != manager->PHYSICS_TYPE_NONE)

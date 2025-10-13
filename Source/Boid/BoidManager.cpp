@@ -39,7 +39,6 @@ void ABoidManager::BeginPlay()
 	if (CohesionWeight == 0)
 		CohesionWeight = 5.0f;
 
-
 	initData.count = BoidCount;
 	initData.radius = BoidSpawnRadius;
 
