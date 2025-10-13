@@ -21,16 +21,16 @@ ABoidObject::ABoidObject()
 
 FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
 {
-	FVector targetLocation = startPosition;
+	FVector myLocation = GetActorLocation();
 	FVector newCurrentVelocity; 
 
 	switch (steeringBehaviourType)
 	{
 		case BoidSteeringBehaviour::Seek:
-			newCurrentVelocity = targetLocation - startPosition;
+			newCurrentVelocity = myLocation - startPosition;
 			break;
 		case BoidSteeringBehaviour::Flee:
-			newCurrentVelocity = startPosition - targetLocation;
+			newCurrentVelocity = startPosition - myLocation;
 			break;
 		case BoidSteeringBehaviour::Pursue:
 			// try to use it
@@ -66,12 +66,12 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 			break;
 		case BoidFlockingBehaviour::Cohere:
 			for (ABoidObject* boid : neighbours)
-				currentFlockVel += boid->GetActorLocation();
+				averageLocation += boid->GetActorLocation();
 
 			averageLocation /= numNeighbours;
 
 			steeringBehaviourType = BoidSteeringBehaviour::Seek;
-			Steer(deltaTime, averageLocation);
+			currentFlockVel = Steer(deltaTime, averageLocation);
 			// additional cohere steps
 			break;
 		case BoidFlockingBehaviour::Separate:
@@ -97,17 +97,18 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	// Steer for this frame with deltatime applied
 
 	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
 	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->CohesionWeight;
 	flockingBehaviourType = BoidFlockingBehaviour::Separate;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius));
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
-		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); // todo: split targetVelocity
+		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); 
 	else
 		mesh->AddImpulse(targetVelocity);
 
+	currentVelocity = targetVelocity; 
 }
 
 void ABoidObject::SetPhysicsType()

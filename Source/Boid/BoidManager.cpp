@@ -27,6 +27,19 @@ void ABoidManager::BeginPlay()
 	if (BoidSpawnRadius <= 0)
 		BoidSpawnRadius = 1024.0f;
 
+	if (FlockingBehaviourRadius == 0)
+		FlockingBehaviourRadius = 512.0f;
+
+	if (SeparationWeight == 0)
+		SeparationWeight = 5.0f;
+
+	if (AlignmentWeight == 0)
+		AlignmentWeight = 5.0f;
+
+	if (CohesionWeight == 0)
+		CohesionWeight = 5.0f;
+
+
 	initData.count = BoidCount;
 	initData.radius = BoidSpawnRadius;
 
