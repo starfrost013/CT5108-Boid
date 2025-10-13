@@ -118,7 +118,7 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 void ABoidObject::Wander(float deltaTime, FVector wanderRange)
 {
-
+	// pick a random target
 }
 
 void ABoidObject::SetPhysicsType()
