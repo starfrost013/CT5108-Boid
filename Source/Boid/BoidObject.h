@@ -47,7 +47,7 @@ public:
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
 	FVector Steer(float deltaTime, FVector startPosition);
 	FVector Flock(float deltaTime, TArray<ABoidObject*> neighbours);
-	void Wander(float deltaTime);
+	FVector Wander(float deltaTime);
 	void SetPhysicsType();
 
 
