@@ -48,15 +48,18 @@ public:
 	// 2 = Physics w/Gravity (Doesn't make sense for this not to be sim-wide)
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int PhysicsType;
-	
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	float WanderRadius;
-	
 
 	// better than defines
 	const int32_t PHYSICS_TYPE_NONE = 0;
 	const int32_t PHYSICS_TYPE_PHYS_NOGRAV = 1;
 	const int32_t PHYSICS_TYPE_PHYS_FULL = 2;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float WanderRadius;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float BaseSpeed;
+	
 
 	USceneComponent* transform;
 

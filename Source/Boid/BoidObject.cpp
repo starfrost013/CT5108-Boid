@@ -107,6 +107,7 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 	targetVelocity += Wander(deltaTime);
 
+	targetVelocity *= manager->BaseSpeed; 
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
 		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); 

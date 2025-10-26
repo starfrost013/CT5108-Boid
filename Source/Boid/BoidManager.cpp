@@ -39,6 +39,9 @@ void ABoidManager::BeginPlay()
 	if (CohesionWeight == 0)
 		CohesionWeight = 5.0f;
 
+	if (BaseSpeed == 0)
+		BaseSpeed = 1024.0f;
+
 	initData.count = BoidCount;
 	initData.radius = BoidSpawnRadius;
 
@@ -56,6 +59,7 @@ void ABoidManager::BeginPlay()
 		object->weights.cohesion = CohesionWeight;
 		object->weights.separation = SeparationWeight;
 		object->wanderRadius = WanderRadius;
+
 		// we're done so set the physics type
 		object->SetPhysicsType();
 
