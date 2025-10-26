@@ -47,7 +47,7 @@ public:
 	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
 	FVector Steer(float deltaTime, FVector startPosition);
 	FVector Flock(float deltaTime, TArray<ABoidObject*> neighbours);
-	void Wander(float deltaTime, FVector wanderRange);
+	void Wander(float deltaTime);
 	void SetPhysicsType();
 
 
@@ -57,6 +57,7 @@ public:
 	BoidSteeringBehaviour steeringBehaviourType;
 	BoidWeights weights; 
 	float flockRange;
+	float wanderRadius;
 
 	ABoidManager* manager;									// Set during spawn
 
@@ -66,7 +67,8 @@ protected:
 
 private:
 	UStaticMeshComponent* mesh;
-	FVector currentVelocity;
-	FVector targetVelocity;
+	FVector currentVelocity = FVector::ZeroVector;
+	FVector targetVelocity = FVector::ZeroVector;
+	FVector currentWanderTarget = FVector::ZeroVector;
 
 };

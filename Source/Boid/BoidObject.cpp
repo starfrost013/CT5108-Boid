@@ -105,6 +105,7 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
 	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
 
+	
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
 		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); 
@@ -116,9 +117,20 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	currentVelocity = targetVelocity; 
 }
 
-void ABoidObject::Wander(float deltaTime, FVector wanderRange)
+#define BOID_EPSILON_LENGTH			100.0f
+
+void ABoidObject::Wander(float deltaTime)
 {
 	// pick a random target
+	if (currentWanderTarget == FVector::ZeroVector
+	|| (currentWanderTarget - GetActorLocation()).Size() < BOID_EPSILON_LENGTH)
+	{
+		currentWanderTarget = FMath::VRand() * wanderRadius;
+		steeringBehaviourType = BoidSteeringBehaviour::Seek;
+		Steer(deltaTime, currentWanderTarget);
+
+	}
+
 }
 
 void ABoidObject::SetPhysicsType()

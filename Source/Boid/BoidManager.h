@@ -20,8 +20,6 @@ public:
 	// apply to target to get flock
 	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
 
-
-
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	UClass* boidBP;
 
@@ -50,6 +48,10 @@ public:
 	// 2 = Physics w/Gravity (Doesn't make sense for this not to be sim-wide)
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int PhysicsType;
+	
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float WanderRadius;
+	
 
 	// better than defines
 	const int32_t PHYSICS_TYPE_NONE = 0;
