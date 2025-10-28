@@ -1,4 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//
+// Boid Simulator
+// Copyright © 2025 starfrost 
+//
 
 #include "BoidManager.h"
 #include "BoidObject.h"
@@ -11,12 +14,6 @@ ABoidObject::ABoidObject()
 
 	// create a sphere
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoidSphere"));
-
-	// get a basic unreal static mesh
-	/*UStaticMesh* sphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Content/Models/squirrel/StaticMeshes/Squirrel.uasset'")).Object;
-	mesh->SetStaticMesh(sphereMesh);
-
-	this->SetRootComponent(mesh);*/
 }
 
 FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
@@ -50,7 +47,6 @@ FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
 FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 {
 	FVector currentFlockVel = FVector(), averageLocation = FVector();
-
 	uint32_t numNeighbours = neighbours.Num();
 
 	if (!numNeighbours)
