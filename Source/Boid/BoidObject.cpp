@@ -106,7 +106,7 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	// try and steer away from any obstacles e.g. other boids
 
 	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
-	float radius = 100.0;
+	float radius = 1024.0;
 
 	// Let's hope 1.0 = 1 meter
 	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
@@ -114,7 +114,12 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 	if (thingWeHit)
 	{
 		// try and steer away
+		FRotator rotation = GetActorRotation();
+		
+		// apply a turn
+		FRotator away = thingWeHit->GetActorRotation() - rotation;
 
+		SetActorRotation(rotation + ((away - rotation) * 0.01f)); //test
 	}
 
 	targetVelocity *= manager->BaseSpeed; 
