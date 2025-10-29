@@ -30,15 +30,6 @@ void ABoidManager::BeginPlay()
 	if (FlockingBehaviourRadius == 0)
 		FlockingBehaviourRadius = 512.0f;
 
-	if (SeparationWeight == 0)
-		SeparationWeight = 5.0f;
-
-	if (AlignmentWeight == 0)
-		AlignmentWeight = 5.0f;
-
-	if (CohesionWeight == 0)
-		CohesionWeight = 5.0f;
-
 	if (BaseSpeed == 0)
 		BaseSpeed = 1024.0f;
 
@@ -132,3 +123,22 @@ void ABoidManager::Tick(float DeltaTime)
 	}
 }
 
+// See if anything is in the way of a boid object
+// Fire a raycast in order to do this
+AActor* ABoidManager::AnythingInTheWay(ABoidObject* boid, float lineLength)
+{
+	FHitResult hit;
+
+	// calculate the start and end positions of the ray
+	FVector startPosition = GetActorLocation();
+	FVector endPosition = GetActorLocation() + lineLength;
+
+	// don't hit ourselves
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(hit, startPosition, endPosition, ECollisionChannel::ECC_Visibility, params))
+		return hit.GetActor();
+	else
+		return nullptr;
+}

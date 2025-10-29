@@ -20,6 +20,9 @@ public:
 	// apply to target to get flock
 	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
 
+	// Return the first object that we hit
+	AActor* AnythingInTheWay(ABoidObject* boid, float lineLength);
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	UClass* boidBP;
 

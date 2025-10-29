@@ -103,6 +103,20 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 	targetVelocity += Wander(deltaTime);
 
+	// try and steer away from any obstacles e.g. other boids
+
+	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
+	float radius = 100.0;
+
+	// Let's hope 1.0 = 1 meter
+	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
+
+	if (thingWeHit)
+	{
+		// try and steer away
+
+	}
+
 	targetVelocity *= manager->BaseSpeed; 
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
