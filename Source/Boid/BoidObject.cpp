@@ -24,11 +24,9 @@ FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
 	switch (steeringBehaviourType)
 	{
 		case BoidSteeringBehaviour::Seek:
-			//newCurrentVelocity = myLocation - goalPosition;
 			newCurrentVelocity = goalPosition - myLocation; 
 			break;
 		case BoidSteeringBehaviour::Flee:
-			//newCurrentVelocity = goalPosition - myLocation;
 			newCurrentVelocity = myLocation - goalPosition;
 			break;
 		case BoidSteeringBehaviour::Pursue:
@@ -84,56 +82,6 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 	return currentFlockVel;
 }
 
-void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
-{
-	// Initially, utilise
-	// test
-
-	// Steer for this frame with deltatime applied
-
-	flockingBehaviourType = BoidFlockingBehaviour::Separate;
-	targetVelocity = Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
-
-	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->CohesionWeight;
-
-	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
-
-	targetVelocity += Wander(deltaTime);
-
-	// try and steer away from any obstacles e.g. other boids
-
-	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
-	float radius = 1024.0;
-
-	// Let's hope 1.0 = 1 meter
-	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
-
-	if (thingWeHit)
-	{
-		// try and steer away
-		FRotator rotation = GetActorRotation();
-		
-		// apply a turn
-		FRotator away = thingWeHit->GetActorRotation() - rotation;
-
-		SetActorRotation(rotation + ((away - rotation) * 0.01f)); //test
-	}
-
-	targetVelocity.Normalize();
-	targetVelocity *= manager->BaseSpeed; 
-
-	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
-		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime); 
-	else
-		mesh->AddImpulse(targetVelocity);
-
-	SetActorRotation(targetVelocity.Rotation());
-
-	currentVelocity = targetVelocity; 
-}
-
 #define BOID_EPSILON_LENGTH			100.0f
 
 FVector ABoidObject::Wander(float deltaTime)
@@ -170,8 +118,52 @@ void ABoidObject::BeginPlay()
 }
 
 // Called every frame
-void ABoidObject::Tick(float DeltaTime)
+void ABoidObject::Tick(float deltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(deltaTime);
+
+	// Steer for this frame with deltatime applied
+
+	flockingBehaviourType = BoidFlockingBehaviour::Separate;
+	targetVelocity = Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
+
+	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->CohesionWeight;
+
+	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
+	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
+
+	targetVelocity += Wander(deltaTime);
+
+	// try and steer away from any obstacles e.g. other boids
+
+	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
+	float radius = 1024.0;
+
+	// Let's hope 1.0 = 1 meter
+	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
+
+	if (thingWeHit)
+	{
+		// try and steer away
+		FRotator rotation = GetActorRotation();
+
+		// apply a turn
+		FRotator away = thingWeHit->GetActorRotation() - rotation;
+
+		SetActorRotation(rotation + ((away - rotation) * 0.01f)); //test
+	}
+
+	targetVelocity.Normalize();
+	targetVelocity *= manager->BaseSpeed;
+
+	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
+		SetActorLocation(GetActorLocation() + (targetVelocity)*deltaTime);
+	else
+		mesh->AddImpulse(targetVelocity);
+
+	SetActorRotation(targetVelocity.Rotation());
+
+	currentVelocity = targetVelocity;
 }
 

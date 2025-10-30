@@ -113,13 +113,6 @@ TArray<ABoidObject*> ABoidManager::GetBoidsWithinRange(ABoidObject* boid, float 
 void ABoidManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	for (auto boid : initData.boids)
-	{
-		// I'm not sure if this will acutally owrk since it could be removed during its updateboid function
-			
-		boid->UpdateBoid(DeltaTime, FindNearestBoid(GetActorLocation())); // change to arbitrary position/
-	}
 }
 
 // See if anything is in the way of a boid object
