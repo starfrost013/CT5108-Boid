@@ -49,7 +49,6 @@ void ABoidManager::BeginPlay()
 		object->weights.alignment = AlignmentWeight;
 		object->weights.cohesion = CohesionWeight;
 		object->weights.separation = SeparationWeight;
-		object->wanderRadius = WanderRadius;
 
 		// we're done so set the physics type
 		object->SetPhysicsType();

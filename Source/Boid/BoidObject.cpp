@@ -3,8 +3,8 @@
 // Copyright © 2025 starfrost 
 //
 
-#include "BoidManager.h"
 #include "BoidObject.h"
+#include "BoidManager.h"
 
 // Sets default values
 ABoidObject::ABoidObject()
@@ -16,7 +16,7 @@ ABoidObject::ABoidObject()
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoidSphere"));
 }
 
-FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
+FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
 {
 	FVector myLocation = GetActorLocation();
 	FVector newCurrentVelocity; 
@@ -24,22 +24,22 @@ FVector ABoidObject::Steer(float deltaTime, FVector startPosition)
 	switch (steeringBehaviourType)
 	{
 		case BoidSteeringBehaviour::Seek:
-			newCurrentVelocity = myLocation - startPosition;
+			//newCurrentVelocity = myLocation - goalPosition;
+			newCurrentVelocity = goalPosition - myLocation; 
 			break;
 		case BoidSteeringBehaviour::Flee:
-			newCurrentVelocity = startPosition - myLocation;
+			//newCurrentVelocity = goalPosition - myLocation;
+			newCurrentVelocity = myLocation - goalPosition;
 			break;
 		case BoidSteeringBehaviour::Pursue:
 			// try to use it
-			newCurrentVelocity = startPosition; //TODO: make parameter
+			newCurrentVelocity = goalPosition; //TODO: make parameter
 			break;
 		case BoidSteeringBehaviour::Evade:
-			newCurrentVelocity = -startPosition;
+			newCurrentVelocity = -goalPosition;
 			break;
 	}
 
-	newCurrentVelocity.Normalize();
-	newCurrentVelocity *= deltaTime;
 
 	return newCurrentVelocity;
 }
@@ -81,7 +81,6 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 			break;
 	}
 
-	currentFlockVel.Normalize();
 	return currentFlockVel;
 }
 
@@ -122,6 +121,7 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 		SetActorRotation(rotation + ((away - rotation) * 0.01f)); //test
 	}
 
+	targetVelocity.Normalize();
 	targetVelocity *= manager->BaseSpeed; 
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
@@ -138,11 +138,14 @@ void ABoidObject::UpdateBoid(float deltaTime, ABoidObject* targetObj)
 
 FVector ABoidObject::Wander(float deltaTime)
 {
+	FVector position = GetActorLocation();
+	double dist = (currentWanderTarget - GetActorLocation()).Size();
+
 	// pick a random target
 	if (currentWanderTarget == FVector::ZeroVector
-	|| (currentWanderTarget - GetActorLocation()).Size() < BOID_EPSILON_LENGTH)
+	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH)
 	{
-		currentWanderTarget = FMath::VRand() * wanderRadius;
+		currentWanderTarget = FMath::VRand() * manager->WanderRadius;
 	}
 
 	steeringBehaviourType = BoidSteeringBehaviour::Seek;

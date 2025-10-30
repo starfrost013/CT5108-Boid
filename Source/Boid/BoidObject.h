@@ -57,7 +57,6 @@ public:
 	BoidSteeringBehaviour steeringBehaviourType;
 	BoidWeights weights; 
 	float flockRange;
-	float wanderRadius;
 
 	ABoidManager* manager;									// Set during spawn
 
