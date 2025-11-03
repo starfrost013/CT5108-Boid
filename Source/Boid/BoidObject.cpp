@@ -18,7 +18,7 @@ ABoidObject::ABoidObject()
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoidSphere"));
 }
 
-FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
+FVector ABoidObject::Steer(FVector goalPosition, BoidSteeringBehaviour steeringBehaviourType)
 {
 	FVector myLocation = GetActorLocation();
 	FVector newCurrentVelocity; 
@@ -43,7 +43,7 @@ FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
 	return newCurrentVelocity;
 }
 
-FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
+FVector ABoidObject::Flock(TArray<ABoidObject*> neighbours, BoidFlockingBehaviour flockingBehaviourType)
 {
 	FVector currentFlockVel = FVector(), averageLocation = FVector();
 	uint32_t numNeighbours = neighbours.Num();
@@ -65,16 +65,12 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 
 			averageLocation /= numNeighbours;
 
-			steeringBehaviourType = BoidSteeringBehaviour::Seek;
-			currentFlockVel = Steer(deltaTime, averageLocation);
+			currentFlockVel = Steer(averageLocation, BoidSteeringBehaviour::Seek);
 			// additional cohere steps
 			break;
 		case BoidFlockingBehaviour::Separate:
 			for (ABoidObject* boid : neighbours)
-			{
-				steeringBehaviourType = BoidSteeringBehaviour::Flee;
-				currentFlockVel += Steer(deltaTime, boid->GetActorLocation());
-			}
+				currentFlockVel += Steer(boid->GetActorLocation(), BoidSteeringBehaviour::Flee);
 
 			currentFlockVel /= numNeighbours;
 			break;
@@ -84,7 +80,7 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 }
 
 
-FVector ABoidObject::Wander(float deltaTime)
+FVector ABoidObject::Wander()
 {
 	FVector position = GetActorLocation();
 
@@ -97,7 +93,7 @@ FVector ABoidObject::Wander(float deltaTime)
 
 	// pick a random target
 	if (currentWanderTarget == FVector::ZeroVector
-	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH#
+	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH
 		&& isFarEnoughAwayFromOld)
 	{
 		oldWanderTarget = currentWanderTarget;
@@ -105,9 +101,7 @@ FVector ABoidObject::Wander(float deltaTime)
 
 	}
 
-	steeringBehaviourType = BoidSteeringBehaviour::Seek;
-
-	FVector wanderVelocity = Steer(deltaTime, currentWanderTarget);
+	FVector wanderVelocity = Steer(currentWanderTarget, BoidSteeringBehaviour::Seek);
 	return wanderVelocity;
 }
 
@@ -135,16 +129,10 @@ void ABoidObject::Tick(float deltaTime)
 
 	// Steer for this frame with deltatime applied
 
-	flockingBehaviourType = BoidFlockingBehaviour::Separate;
-	targetVelocity = Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->SeparationWeight;
-
-	flockingBehaviourType = BoidFlockingBehaviour::Cohere;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->CohesionWeight;
-
-	flockingBehaviourType = BoidFlockingBehaviour::Alignment;
-	targetVelocity += Flock(deltaTime, manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius)) * manager->AlignmentWeight;
-
-	targetVelocity += Wander(deltaTime);
+	targetVelocity = Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Separate) * manager->SeparationWeight;
+	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Cohere) * manager->CohesionWeight;
+	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Alignment) * manager->AlignmentWeight;
+	targetVelocity += Wander();
 
 	// try and steer away from any obstacles e.g. other boids
 
@@ -158,9 +146,8 @@ void ABoidObject::Tick(float deltaTime)
 	// obstacle avoidance
 	if (thingWeHit)
 	{
-		steeringBehaviourType = BoidSteeringBehaviour::Flee;
 		// based on the distance away from it apply a different fading factor
-	//	targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation()) * manager->SeparationWeight * 2.0f;
+	//	targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation(), BoidSteeringBehaviour::Flee) * manager->SeparationWeight * 2.0f;
 	}
 
     targetVelocity.Normalize();

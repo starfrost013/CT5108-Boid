@@ -44,16 +44,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// i am not sure this is a good ideas
-	FVector Steer(float deltaTime, FVector startPosition);
-	FVector Flock(float deltaTime, TArray<ABoidObject*> neighbours);
-	FVector Wander(float deltaTime);
+	FVector Steer(FVector startPosition, BoidSteeringBehaviour steeringBehaviourType);
+	FVector Flock(TArray<ABoidObject*> neighbours, BoidFlockingBehaviour flockingBehaviourType);
+	FVector Wander();
 	void SetPhysicsType();
 
 
 	bool target;											// The subject of the steering behaviour.
 	//FVector velocity;
-	BoidFlockingBehaviour flockingBehaviourType;
-	BoidSteeringBehaviour steeringBehaviourType;
 	BoidWeights weights; 
 	float flockRange;
 
