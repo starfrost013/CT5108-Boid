@@ -27,6 +27,23 @@ public:
 
 	// this is terrible
 	static ABoidManager* boidManager;
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Alignment", meta = (WorldContext = "WorldContext"))
+	static float GetAlignment(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Cohesion", meta = (WorldContext = "WorldContext"))
+	static float GetCohesion(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Separation", meta = (WorldContext = "WorldContext"))
+	static float GetSeparation(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Wander Radius", meta = (WorldContext = "WorldContext"))
+	static float GetWanderRadius(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Flock Radius", meta = (WorldContext = "WorldContext"))
+	static float GetFlockRadius(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Base Speed", meta = (WorldContext = "WorldContext"))
+	static float GetBaseSpeed(const UObject* worldContext, float value);
 
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Alignment", meta = (WorldContext = "WorldContext"))
 	static void SetAlignment(const UObject* worldContext, float value);

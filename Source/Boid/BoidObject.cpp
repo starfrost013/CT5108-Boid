@@ -6,6 +6,8 @@
 #include "BoidObject.h"
 #include "BoidManager.h"
 
+#define BOID_EPSILON_LENGTH			1000.0f
+
 // Sets default values
 ABoidObject::ABoidObject()
 {
@@ -31,7 +33,7 @@ FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
 			break;
 		case BoidSteeringBehaviour::Pursue:
 			// try to use it
-			newCurrentVelocity = goalPosition; //TODO: make parameter
+			newCurrentVelocity = goalPosition; 
 			break;
 		case BoidSteeringBehaviour::Evade:
 			newCurrentVelocity = -goalPosition;
@@ -79,10 +81,10 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 			break;
 	}
 
+	currentFlockVel.Normalize();
 	return currentFlockVel;
 }
 
-#define BOID_EPSILON_LENGTH			100.0f
 
 FVector ABoidObject::Wander(float deltaTime)
 {
@@ -93,11 +95,14 @@ FVector ABoidObject::Wander(float deltaTime)
 	if (currentWanderTarget == FVector::ZeroVector
 	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH)
 	{
-		currentWanderTarget = FMath::VRand() * manager->WanderRadius;
+		currentWanderTarget = (GetActorLocation()) + (FMath::VRand() * manager->WanderRadius);
 	}
 
 	steeringBehaviourType = BoidSteeringBehaviour::Seek;
-	return Steer(deltaTime, currentWanderTarget);
+
+	FVector wanderVelocity = Steer(deltaTime, currentWanderTarget);
+	wanderVelocity.Normalize();
+	return wanderVelocity;
 }
 
 void ABoidObject::SetPhysicsType()
@@ -138,31 +143,29 @@ void ABoidObject::Tick(float deltaTime)
 	// try and steer away from any obstacles e.g. other boids
 
 	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
-	float radius = 1024.0;
+	float radius = 2048.0;
 
 	// Let's hope 1.0 = 1 meter
 	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
+	FRotator finalRotation = targetVelocity.Rotation();
 
+	// obstacle avoidance
 	if (thingWeHit)
 	{
-		// try and steer away
-		FRotator rotation = GetActorRotation();
-
-		// apply a turn
-		FRotator away = thingWeHit->GetActorRotation() - rotation;
-
-		SetActorRotation(rotation + ((away - rotation) * 0.01f)); //test
+		steeringBehaviourType = BoidSteeringBehaviour::Flee;
+		// based on the distance away from it apply a different fading factor
+		targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation()) * manager->SeparationWeight * 2.0f;
 	}
 
 	targetVelocity.Normalize();
 	targetVelocity *= manager->BaseSpeed;
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)
-		SetActorLocation(GetActorLocation() + (targetVelocity)*deltaTime);
+		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime);
 	else
 		mesh->AddImpulse(targetVelocity);
 
-	SetActorRotation(targetVelocity.Rotation());
+	SetActorRotation(finalRotation);
 
 	currentVelocity = targetVelocity;
 }

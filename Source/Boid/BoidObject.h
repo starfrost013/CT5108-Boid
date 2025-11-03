@@ -44,7 +44,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// i am not sure this is a good ideas
-	void UpdateBoid(float deltaTime, ABoidObject* targetObj);
 	FVector Steer(float deltaTime, FVector startPosition);
 	FVector Flock(float deltaTime, TArray<ABoidObject*> neighbours);
 	FVector Wander(float deltaTime);
