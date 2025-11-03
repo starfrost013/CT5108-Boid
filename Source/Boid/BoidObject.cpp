@@ -6,7 +6,7 @@
 #include "BoidObject.h"
 #include "BoidManager.h"
 
-#define BOID_EPSILON_LENGTH			1000.0f
+#define BOID_EPSILON_LENGTH			256.0f
 
 // Sets default values
 ABoidObject::ABoidObject()
@@ -39,7 +39,6 @@ FVector ABoidObject::Steer(float deltaTime, FVector goalPosition)
 			newCurrentVelocity = -goalPosition;
 			break;
 	}
-
 
 	return newCurrentVelocity;
 }
@@ -81,7 +80,6 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 			break;
 	}
 
-	currentFlockVel.Normalize();
 	return currentFlockVel;
 }
 
@@ -89,19 +87,27 @@ FVector ABoidObject::Flock(float deltaTime, TArray<ABoidObject*> neighbours)
 FVector ABoidObject::Wander(float deltaTime)
 {
 	FVector position = GetActorLocation();
-	double dist = (currentWanderTarget - GetActorLocation()).Size();
+
+	double dist = (position - currentWanderTarget).Size();
+
+	// the boid will spazz around constantly because if the new target is too close it may endlessly try to select new targets.
+	// let's store our old wander target, and wait until we're more than the epsilon away from THAT before picking a new one (as long as we're not also right next to the new one)
+
+	bool isFarEnoughAwayFromOld = ((position - oldWanderTarget).Size()) > BOID_EPSILON_LENGTH;
 
 	// pick a random target
 	if (currentWanderTarget == FVector::ZeroVector
-	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH)
+	|| FMath::Abs(dist) < BOID_EPSILON_LENGTH#
+		&& isFarEnoughAwayFromOld)
 	{
-		currentWanderTarget = (GetActorLocation()) + (FMath::VRand() * manager->WanderRadius);
+		oldWanderTarget = currentWanderTarget;
+		currentWanderTarget = (position + (FMath::VRand() * manager->WanderRadius));
+
 	}
 
 	steeringBehaviourType = BoidSteeringBehaviour::Seek;
 
 	FVector wanderVelocity = Steer(deltaTime, currentWanderTarget);
-	wanderVelocity.Normalize();
 	return wanderVelocity;
 }
 
@@ -154,10 +160,10 @@ void ABoidObject::Tick(float deltaTime)
 	{
 		steeringBehaviourType = BoidSteeringBehaviour::Flee;
 		// based on the distance away from it apply a different fading factor
-		targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation()) * manager->SeparationWeight * 2.0f;
+	//	targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation()) * manager->SeparationWeight * 2.0f;
 	}
 
-	targetVelocity.Normalize();
+    targetVelocity.Normalize();
 	targetVelocity *= manager->BaseSpeed;
 
 	if (manager->PhysicsType == manager->PHYSICS_TYPE_NONE)

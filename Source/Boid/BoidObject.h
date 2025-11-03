@@ -67,6 +67,7 @@ private:
 	UStaticMeshComponent* mesh;
 	FVector currentVelocity = FVector::ZeroVector;
 	FVector targetVelocity = FVector::ZeroVector;
+	FVector oldWanderTarget = FVector::ZeroVector;
 	FVector currentWanderTarget = FVector::ZeroVector;
 
 };
