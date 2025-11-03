@@ -39,7 +39,7 @@ FVector ABoidObject::Steer(FVector goalPosition, BoidSteeringBehaviour steeringB
 			newCurrentVelocity = -goalPosition;
 			break;
 	}
-
+	newCurrentVelocity.Normalize();
 	return newCurrentVelocity;
 }
 
@@ -75,6 +75,7 @@ FVector ABoidObject::Flock(TArray<ABoidObject*> neighbours, BoidFlockingBehaviou
 			currentFlockVel /= numNeighbours;
 			break;
 	}
+	currentFlockVel.Normalize();
 
 	return currentFlockVel;
 }
@@ -105,6 +106,36 @@ FVector ABoidObject::Wander()
 	return wanderVelocity;
 }
 
+// Squirrels don't have strong heads
+FVector ABoidObject::Avoidance()
+{
+	float radius = manager->EyesightLength;
+
+	// Let's hope 1.0 = 1 meter
+	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
+	FRotator finalRotation = targetVelocity.Rotation();
+	FVector velocity = FVector::ZeroVector;
+
+	// obstacle avoidance
+	if (thingWeHit)
+	{
+		velocity = GetActorLocation() - thingWeHit->GetActorLocation();
+		double dist = velocity.Size();
+
+		// add an increasingly strong repulsive force as we get closer to the thing
+		FVector finalVelocity = velocity * (1 / (dist / 64.0f));
+
+		// ignore invalid avlues
+		if (finalVelocity.ContainsNaN())
+			finalVelocity = FVector::ZeroVector;
+
+		return finalVelocity;
+
+	}
+	else
+		return FVector::ZeroVector;
+}
+
 void ABoidObject::SetPhysicsType()
 {
 	if (manager->PhysicsType != manager->PHYSICS_TYPE_NONE)
@@ -129,26 +160,17 @@ void ABoidObject::Tick(float deltaTime)
 
 	// Steer for this frame with deltatime applied
 
-	targetVelocity = Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Separate) * manager->SeparationWeight;
-	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Cohere) * manager->CohesionWeight;
-	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->FlockingBehaviourRadius), BoidFlockingBehaviour::Alignment) * manager->AlignmentWeight;
+	targetVelocity = Flock(manager->GetBoidsWithinRange(this, manager->BoidPerceptionRadius), BoidFlockingBehaviour::Separate) * manager->SeparationWeight;
+	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->BoidPerceptionRadius), BoidFlockingBehaviour::Cohere) * manager->CohesionWeight;
+	targetVelocity += Flock(manager->GetBoidsWithinRange(this, manager->BoidPerceptionRadius), BoidFlockingBehaviour::Alignment) * manager->AlignmentWeight;
 	targetVelocity += Wander();
 
 	// try and steer away from any obstacles e.g. other boids
 
 	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
-	float radius = 2048.0;
-
-	// Let's hope 1.0 = 1 meter
-	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
-	FRotator finalRotation = targetVelocity.Rotation();
-
-	// obstacle avoidance
-	if (thingWeHit)
-	{
-		// based on the distance away from it apply a different fading factor
-	//	targetVelocity += Steer(deltaTime, thingWeHit->GetActorLocation(), BoidSteeringBehaviour::Flee) * manager->SeparationWeight * 2.0f;
-	}
+	targetVelocity += Avoidance();
+	//if (escapeVelocity != FVector::ZeroVector)
+		//targetVelocity = escapeVelocity;
 
     targetVelocity.Normalize();
 	targetVelocity *= manager->BaseSpeed;
@@ -157,8 +179,8 @@ void ABoidObject::Tick(float deltaTime)
 		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime);
 	else
 		mesh->AddImpulse(targetVelocity);
-
-	SetActorRotation(finalRotation);
+	
+	SetActorRotation(targetVelocity.Rotation());
 
 	currentVelocity = targetVelocity;
 }

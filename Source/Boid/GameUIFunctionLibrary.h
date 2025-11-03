@@ -39,11 +39,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Wander Radius", meta = (WorldContext = "WorldContext"))
 	static float GetWanderRadius(const UObject* worldContext, float value);
 
-	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Flock Radius", meta = (WorldContext = "WorldContext"))
-	static float GetFlockRadius(const UObject* worldContext, float value);
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Perception Radius", meta = (WorldContext = "WorldContext"))
+	static float GetPerceptionRadius(const UObject* worldContext, float value);
 
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Base Speed", meta = (WorldContext = "WorldContext"))
 	static float GetBaseSpeed(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Simulator Version", meta = (WorldContext = "WorldContext"))
+	static FString GetVersion();
 
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Alignment", meta = (WorldContext = "WorldContext"))
 	static void SetAlignment(const UObject* worldContext, float value);
@@ -57,11 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Wander Radius", meta = (WorldContext = "WorldContext"))
 	static void SetWanderRadius(const UObject* worldContext, float value);
 
-	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Flock Radius", meta = (WorldContext = "WorldContext"))
-	static void SetFlockRadius(const UObject* worldContext, float value);
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Perception Radius", meta = (WorldContext = "WorldContext"))
+	static void SetPerceptionRadius(const UObject* worldContext, float value);
 
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Base Speed", meta = (WorldContext = "WorldContext"))
 	static void SetBaseSpeed(const UObject* worldContext, float value);
+
 
 private:
 	static bool GetBoidManager(const UObject* worldContext);

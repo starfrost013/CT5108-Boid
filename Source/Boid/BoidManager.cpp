@@ -21,18 +21,6 @@ void ABoidManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (BoidCount <= 0)
-		BoidCount = 1024;
-
-	if (BoidSpawnRadius <= 0)
-		BoidSpawnRadius = 1024.0f;
-
-	if (FlockingBehaviourRadius == 0)
-		FlockingBehaviourRadius = 512.0f;
-
-	if (BaseSpeed == 0)
-		BaseSpeed = 1024.0f;
-
 	initData.count = BoidCount;
 	initData.radius = BoidSpawnRadius;
 
@@ -45,7 +33,6 @@ void ABoidManager::BeginPlay()
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
 		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(boidBP, spawnLocation, spawnRotation);
 		object->manager = this;
-		object->steeringBehaviourType = ABoidObject::BoidSteeringBehaviour::Seek;
 		object->weights.alignment = AlignmentWeight;
 		object->weights.cohesion = CohesionWeight;
 		object->weights.separation = SeparationWeight;

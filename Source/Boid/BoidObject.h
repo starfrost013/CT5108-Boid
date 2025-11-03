@@ -1,4 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//
+// Boid Simulator
+// Copyright © 2025 starfrost 
+//
 
 #pragma once
 
@@ -19,12 +22,13 @@ public:
 
 	enum BoidSteeringBehaviour
 	{
-		Seek = 0,
-		Flee = 1,
-		Pursue = 2,
-		Evade = 3,
-		Arrive = 4,
-		AvoidObstacles = 5,
+		Seek = 0,							// Seek to a position.
+		Flee = 1,							// Flee from a position.
+		Pursue = 2,							// Pursue a position.
+		Evade = 3,							// Evade (i.e. anticipate and try to get away from) a position.
+		Arrive = 4,							// Try to find a position.
+		SteerToAvoid = 5,					// Steer away from something.
+		AvoidObstacles = 6,					// Avoid any obstacles.
 	};
 
 	enum BoidFlockingBehaviour
@@ -47,6 +51,7 @@ public:
 	FVector Steer(FVector startPosition, BoidSteeringBehaviour steeringBehaviourType);
 	FVector Flock(TArray<ABoidObject*> neighbours, BoidFlockingBehaviour flockingBehaviourType);
 	FVector Wander();
+	FVector Avoidance();
 	void SetPhysicsType();
 
 

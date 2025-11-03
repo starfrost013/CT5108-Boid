@@ -1,4 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//
+// Boid Simulator
+// Copyright © 2025 starfrost 
+//
+
 
 #pragma once
 #include "BoidObject.h"
@@ -44,7 +48,7 @@ public:
 	float SeparationWeight;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	float FlockingBehaviourRadius;
+	float BoidPerceptionRadius;
 
 	// 0 = No Physics
 	// 1 = Physics no gravity
@@ -62,7 +66,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float BaseSpeed;
-	
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float EyesightLength;
 
 	USceneComponent* transform;
 
