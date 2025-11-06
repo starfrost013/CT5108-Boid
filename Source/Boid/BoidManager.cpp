@@ -2,6 +2,7 @@
 
 
 #include "BoidManager.h"
+#include "BoidSuperKiller.h"
 #include "PerformanceProfiler.h"
 
 // Sets default values
@@ -21,17 +22,23 @@ void ABoidManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	initData.count = BoidCount;
+	initData.count_boids = BoidCount;
 	initData.radius = BoidSpawnRadius;
 
-	for (uint32_t i = 0; i < initData.count; i++)
+	FVector spawnLocation = FVector::ZeroVector;
+	FRotator spawnRotation = FRotator::ZeroRotator;
+	UWorld* world = GetWorld();
+
+
+	for (uint32_t i = 0; i < initData.count_boids; i++)
 	{
-		FVector spawnLocation = FMath::VRand() * initData.radius;
-		FRotator spawnRotation = GetActorRotation();
+		spawnLocation = FMath::VRand() * initData.radius;
+		//FRotator spawnRotation = GetActorRotation();
+		spawnRotation = FMath::VRand().Rotation(); // doesn't make a lot of sense to use a static rotation
 
 		// see what this basic version does
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
-		ABoidObject* object = GetWorld()->SpawnActor<ABoidObject>(boidBP, spawnLocation, spawnRotation);
+		ABoidObject* object = world->SpawnActor<ABoidObject>(BoidBlueprint, spawnLocation, spawnRotation);
 		object->manager = this;
 		object->weights.alignment = AlignmentWeight;
 		object->weights.cohesion = CohesionWeight;
@@ -39,15 +46,20 @@ void ABoidManager::BeginPlay()
 
 		// we're done so set the physics type
 		object->SetPhysicsType();
-
-		// faster to statically allocate?
+	
 		initData.boids.Add(object);
-
 	}
 
-	// temp code
-	target = initData.boids[0];
-	initData.boids[0]->target = true;
+	// spawn in the rotators
+	for (uint32_t i = 0; i < initData.count_predators; i++)
+	{
+		spawnLocation = FMath::VRand() * initData.radius;
+		//FRotator spawnRotation = GetActorRotation();
+		spawnRotation = FMath::VRand().Rotation(); // doesn't make a lot of sense to use a static rotation
+
+		ABoidSuperKiller* superKiller = world->SpawnActor<ABoidSuperKiller>(PredatorBlueprint, spawnLocation, spawnRotation);
+		superKiller->manager = this;
+	}
 }
 
 ABoidObject* ABoidManager::FindNearestBoid(FVector position)

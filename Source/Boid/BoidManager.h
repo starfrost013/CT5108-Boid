@@ -17,23 +17,20 @@ class BOID_API ABoidManager : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	ABoidManager();
-	virtual void Tick(float DeltaTime) override;
-	ABoidObject* FindNearestBoid(FVector position);
-	// apply to target to get flock
-	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
-
-	// Return the first object that we hit
-	AActor* AnythingInTheWay(ABoidObject* boid, float lineLength);
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	UClass* boidBP;
+	UClass* BoidBlueprint;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	UClass* PredatorBlueprint;
 
 	// Simulation properties
 	// These are not really directly used but are instead transferred into the actual simulation (NOTE: STDINT types cannot be used as UProperties!) 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int BoidCount;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	int PredatorCount;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float BoidSpawnRadius;
@@ -70,7 +67,18 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float EyesightLength;
 
+	// Sets default values for this actor's properties
+	ABoidManager();
+
 	USceneComponent* transform;
+
+	virtual void Tick(float DeltaTime) override;
+	ABoidObject* FindNearestBoid(FVector position);
+	// apply to target to get flock
+	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
+
+	// Return the first object that we hit
+	AActor* AnythingInTheWay(ABoidObject* boid, float lineLength);
 
 protected:
 	// Called when the game starts or when spawned
@@ -80,7 +88,8 @@ private:
 
 	struct BoidInitialisationData
 	{
-		uint32_t count;
+		uint32_t count_boids;
+		uint32_t count_predators;
 		float radius; 
 		TArray<ABoidObject*> boids;
 	};
