@@ -32,6 +32,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	int PredatorCount;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (UIMin = 0.0f, UIMax = 2.0f))
+	float PredatorAggression;
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float BoidSpawnRadius;
 
