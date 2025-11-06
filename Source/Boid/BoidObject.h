@@ -27,8 +27,6 @@ public:
 	FVector Avoidance();
 	FVector DontGetEaten();
 
-
-
 	//FVector velocity;
 	float flockRange;
 

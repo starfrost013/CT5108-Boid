@@ -70,6 +70,7 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float BaseSpeed;
 
+	// The radius of the area the boid can see
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float EyesightLength;
 
@@ -79,6 +80,10 @@ public:
 	// The boid obliteration epsilon
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float PredatorAttackRadius;
+
+	// The maximum distance the predator will be able to see
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float PredatorMaxPursueDistance;
 
 	// Sets default values for this actor's properties
 	ABoidManager();

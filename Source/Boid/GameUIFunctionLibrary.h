@@ -55,6 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Predator Attack Range", meta = (WorldContext = "WorldContext"))
 	static float GetPredatorAttackRange(const UObject* worldContext, float value);
 
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Self Preservation", meta = (WorldContext = "WorldContext"))
+	static float GetSelfPreservation(const UObject* worldContext, float value);
+
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Simulator Version", meta = (WorldContext = "WorldContext"))
 	static FString GetVersion();
 
@@ -84,6 +87,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Predator Attack Range", meta = (WorldContext = "WorldContext"))
 	static void SetPredatorAttackRange(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Self Preservation", meta = (WorldContext = "WorldContext"))
+	static void SetSelfPreservation(const UObject* worldContext, float value);
 
 private:
 	static bool GetBoidManager(const UObject* worldContext);

@@ -58,6 +58,15 @@ float UGameUIFunctionLibrary::GetSeparation(const UObject* worldContext, float v
 	return boidManager->SeparationWeight / GAMEUI_SLIDER_LERP_BASE_SMALL; // slides are always from 0-1.
 }
 
+float UGameUIFunctionLibrary::GetSelfPreservation(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return -1.0f;
+
+	return boidManager->SelfPreservationWeight / GAMEUI_SLIDER_LERP_BASE_SMALL; // slides are always from 0-1.
+}
+
 float UGameUIFunctionLibrary::GetWanderRadius(const UObject* worldContext, float value)
 {
 	// don't explode if the world is not as we expect
@@ -145,6 +154,15 @@ void UGameUIFunctionLibrary::SetSeparation(const UObject* worldContext, float va
 		return;
 
 	boidManager->SeparationWeight = value * GAMEUI_SLIDER_LERP_BASE_SMALL; // slides are always from 0-1.
+}
+
+void UGameUIFunctionLibrary::SetSelfPreservation(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return;
+
+	boidManager->SelfPreservationWeight = value * GAMEUI_SLIDER_LERP_BASE_SMALL; // slides are always from 0-1.
 }
 
 void UGameUIFunctionLibrary::SetWanderRadius(const UObject* worldContext, float value)
