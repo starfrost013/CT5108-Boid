@@ -23,6 +23,7 @@ void ABoidManager::BeginPlay()
 	Super::BeginPlay();
 
 	initData.count_boids = BoidCount;
+	initData.count_predators = PredatorCount;
 	initData.radius = BoidSpawnRadius;
 
 	FVector spawnLocation = FVector::ZeroVector;

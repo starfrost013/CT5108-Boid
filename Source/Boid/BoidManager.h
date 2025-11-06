@@ -67,6 +67,13 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float EyesightLength;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float PredatorSightRadius;
+
+	// The boid obliteration epsilon
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float PredatorAttackRadius;
+
 	// Sets default values for this actor's properties
 	ABoidManager();
 

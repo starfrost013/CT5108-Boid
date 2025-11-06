@@ -39,6 +39,7 @@ FVector ABoidObject::Steer(FVector goalPosition, BoidSteeringBehaviour steeringB
 			newCurrentVelocity = -goalPosition;
 			break;
 	}
+
 	newCurrentVelocity.Normalize();
 	return newCurrentVelocity;
 }
@@ -99,7 +100,6 @@ FVector ABoidObject::Wander()
 	{
 		oldWanderTarget = currentWanderTarget;
 		currentWanderTarget = (position + (FMath::VRand() * manager->WanderRadius));
-
 	}
 
 	FVector wanderVelocity = Steer(currentWanderTarget, BoidSteeringBehaviour::Seek);
