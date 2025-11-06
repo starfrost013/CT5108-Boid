@@ -48,6 +48,9 @@ public:
 	float SeparationWeight;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	float SelfPreservationWeight;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	float BoidPerceptionRadius;
 
 	// 0 = No Physics
@@ -86,6 +89,7 @@ public:
 	ABoidObject* FindNearestBoid(FVector position);
 	// apply to target to get flock
 	TArray<ABoidObject*> GetBoidsWithinRange(ABoidObject* boid, float range);
+	void RemoveBoid(ABoidObject* boid);
 
 	// Return the first object that we hit
 	AActor* AnythingInTheWay(ABoidObject* boid, float lineLength);

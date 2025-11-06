@@ -85,6 +85,36 @@ float UGameUIFunctionLibrary::GetBaseSpeed(const UObject* worldContext, float va
 	return boidManager->BaseSpeed / GAMEUI_SLIDER_LERP_BASE_LARGE; // slides are always from 0-1.
 }
 
+// Get predator aggressio
+float UGameUIFunctionLibrary::GetPredatorAggression(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return -1.0f;
+
+	return boidManager->PredatorAggression / GAMEUI_SLIDER_LERP_BASE_AGGRO; // slides are always from 0-1.
+}
+
+// Get predator aggressio
+float UGameUIFunctionLibrary::GetPredatorSightRange(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return -1.0f;
+
+	return boidManager->PredatorSightRadius / GAMEUI_SLIDER_LERP_BASE_LARGE; // slides are always from 0-1.
+}
+
+// Get predator aggressio
+float UGameUIFunctionLibrary::GetPredatorAttackRange(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return -1.0f;
+
+	return boidManager->PredatorAttackRadius / GAMEUI_SLIDER_LERP_BASE_LARGE; // slides are always from 0-1.
+}
+
 FString UGameUIFunctionLibrary::GetVersion()
 {
 	return FString(BOID_VERSION_STRING);
@@ -142,4 +172,31 @@ void UGameUIFunctionLibrary::SetBaseSpeed(const UObject* worldContext, float val
 		return;
 
 	boidManager->BaseSpeed = value * GAMEUI_SLIDER_LERP_BASE_LARGE; // slides are always from 0-1.
+}
+
+void UGameUIFunctionLibrary::SetPredatorAggression(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return;
+
+	boidManager->PredatorAggression = value * GAMEUI_SLIDER_LERP_BASE_AGGRO; // slides are always from 0-1.
+}
+
+void UGameUIFunctionLibrary::SetPredatorSightRange(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return;
+
+	boidManager->PredatorSightRadius = value * GAMEUI_SLIDER_LERP_BASE_LARGE; // slides are always from 0-1.
+}
+
+void UGameUIFunctionLibrary::SetPredatorAttackRange(const UObject* worldContext, float value)
+{
+	// don't explode if the world is not as we expect
+	if (!boidManager && !GetBoidManager(worldContext))
+		return;
+
+	boidManager->PredatorAttackRadius = value * GAMEUI_SLIDER_LERP_BASE_AGGRO; // slides are always from 0-1.
 }

@@ -3,8 +3,8 @@
 // Copyright © 2025 starfrost 
 //
 
-#include "BoidBase.h"
 #include "BoidObject.h"
+#include "BoidBase.h"
 #include "BoidManager.h"
 
 
@@ -68,11 +68,11 @@ void ABoidObject::Tick(float deltaTime)
 	targetVelocity += Super::Wander();
 
 	// try and steer away from any obstacles e.g. other boids
-
-	// reasonable rough estimate for the base size until we figure out what unreal is doing with it
 	targetVelocity += Avoidance();
-	//if (escapeVelocity != FVector::ZeroVector)
-		//targetVelocity = escapeVelocity;
+	
+	// if we are being actively targeted try to run away 
+	if (aggressor)
+		targetVelocity += DontGetEaten() * manager->SelfPreservationWeight;
 
     targetVelocity.Normalize();
 	targetVelocity *= manager->BaseSpeed;
@@ -81,9 +81,14 @@ void ABoidObject::Tick(float deltaTime)
 		SetActorLocation(GetActorLocation() + (targetVelocity) * deltaTime);
 	else
 		mesh->AddImpulse(targetVelocity);
-	
+
 	SetActorRotation(targetVelocity.Rotation());
 
 	currentVelocity = targetVelocity;
 }
 
+FVector ABoidObject::DontGetEaten()
+{
+	FVector getAwayFrom = aggressor->GetVelocity();
+	return Steer(getAwayFrom, BoidSteeringBehaviour::Evade);
+}

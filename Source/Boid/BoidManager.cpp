@@ -30,7 +30,6 @@ void ABoidManager::BeginPlay()
 	FRotator spawnRotation = FRotator::ZeroRotator;
 	UWorld* world = GetWorld();
 
-
 	for (uint32_t i = 0; i < initData.count_boids; i++)
 	{
 		spawnLocation = FMath::VRand() * initData.radius;
@@ -41,9 +40,6 @@ void ABoidManager::BeginPlay()
 		// the most efficient verion of this probably has these not as actors but as some sort of thing generartd by a shade ror something
 		ABoidObject* object = world->SpawnActor<ABoidObject>(BoidBlueprint, spawnLocation, spawnRotation);
 		object->manager = this;
-		object->weights.alignment = AlignmentWeight;
-		object->weights.cohesion = CohesionWeight;
-		object->weights.separation = SeparationWeight;
 
 		// we're done so set the physics type
 		object->SetPhysicsType();
@@ -60,6 +56,8 @@ void ABoidManager::BeginPlay()
 
 		ABoidSuperKiller* superKiller = world->SpawnActor<ABoidSuperKiller>(PredatorBlueprint, spawnLocation, spawnRotation);
 		superKiller->manager = this;
+
+		superKiller->SetPhysicsType();
 	}
 }
 
@@ -107,6 +105,11 @@ TArray<ABoidObject*> ABoidManager::GetBoidsWithinRange(ABoidObject* boid, float 
 	}
 
 	return neighbours; 
+}
+
+void ABoidManager::RemoveBoid(ABoidObject* boid)
+{
+	initData.boids.Remove(boid);
 }
 
 // Called every frame

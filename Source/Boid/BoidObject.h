@@ -21,23 +21,15 @@ public:
 	// Sets default values for this actor's properties
 	ABoidObject();
 
-
-	struct BoidWeights
-	{
-		float alignment;
-		float cohesion;
-		float separation; 
-	};
-
 	virtual void Tick(float DeltaTime) override;
 
 	// i am not sure this is a good ideas
 	FVector Avoidance();
+	FVector DontGetEaten();
 
 
-	bool target;											// The subject of the steering behaviour.
+
 	//FVector velocity;
-	BoidWeights weights; 
 	float flockRange;
 
 protected:

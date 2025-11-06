@@ -22,6 +22,7 @@ class BOID_API UGameUIFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 
 	// Is it possible to set this as a UProperty e.g. in GameUI Blueprint?
+	#define GAMEUI_SLIDER_LERP_BASE_AGGRO		2			// for the aggro stuff [0-2]
 	#define GAMEUI_SLIDER_LERP_BASE_SMALL	16			// for small stuff e.g. separation
 	#define GAMEUI_SLIDER_LERP_BASE_LARGE	2048		// for large stuff
 
@@ -45,6 +46,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Base Speed", meta = (WorldContext = "WorldContext"))
 	static float GetBaseSpeed(const UObject* worldContext, float value);
 
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Predator Aggression", meta = (WorldContext = "WorldContext"))
+	static float GetPredatorAggression(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Predator Sight", meta = (WorldContext = "WorldContext"))
+	static float GetPredatorSightRange(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Predator Attack Range", meta = (WorldContext = "WorldContext"))
+	static float GetPredatorAttackRange(const UObject* worldContext, float value);
+
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Get Boid Simulator Version", meta = (WorldContext = "WorldContext"))
 	static FString GetVersion();
 
@@ -66,6 +76,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Boid Base Speed", meta = (WorldContext = "WorldContext"))
 	static void SetBaseSpeed(const UObject* worldContext, float value);
 
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Predator Aggression", meta = (WorldContext = "WorldContext"))
+	static void SetPredatorAggression(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Predator Sight", meta = (WorldContext = "WorldContext"))
+	static void SetPredatorSightRange(const UObject* worldContext, float value);
+
+	UFUNCTION(BlueprintCallable, Category = "BoidManager Blueprint Library", DisplayName = "Set Predator Attack Range", meta = (WorldContext = "WorldContext"))
+	static void SetPredatorAttackRange(const UObject* worldContext, float value);
 
 private:
 	static bool GetBoidManager(const UObject* worldContext);
