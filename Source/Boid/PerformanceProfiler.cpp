@@ -26,7 +26,7 @@ float GameProfiler_GetMilliseconds()
 #if PLATFORM_WINDOWS
 	Windows::LARGE_INTEGER now;
 	Windows::QueryPerformanceCounter(&now);
-	return (float)(1000.0f * now.QuadPart) / cycles.QuadPart;
+	return (float)(1000.0f * (float)now.QuadPart) / (float)cycles.QuadPart;
 #endif
 
 }
