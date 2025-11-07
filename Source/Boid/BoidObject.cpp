@@ -21,7 +21,7 @@ ABoidObject::ABoidObject()
 // Squirrels don't have strong heads
 FVector ABoidObject::Avoidance()
 {
-	float radius = manager->EyesightLength;
+	float radius = manager->BoidPerceptionRadius;
 
 	// Let's hope 1.0 = 1 meter
 	AActor* thingWeHit = manager->AnythingInTheWay(this, radius);
