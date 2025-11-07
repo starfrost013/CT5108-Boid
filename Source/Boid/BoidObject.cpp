@@ -6,6 +6,7 @@
 #include "BoidObject.h"
 #include "BoidBase.h"
 #include "BoidManager.h"
+#include "PerformanceProfiler.h"
 
 
 // Sets default values
@@ -58,6 +59,8 @@ void ABoidObject::BeginPlay()
 // Called every frame
 void ABoidObject::Tick(float deltaTime)
 {
+	float ms_start = GameProfiler_GetMilliseconds();
+
 	Super::Tick(deltaTime);
 
 	// Steer for this frame with deltatime applied
@@ -85,6 +88,10 @@ void ABoidObject::Tick(float deltaTime)
 	SetActorRotation(targetVelocity.Rotation());
 
 	currentVelocity = targetVelocity;
+
+	float ms_end = GameProfiler_GetMilliseconds();
+
+	float ms_final = ms_end - ms_start;
 }
 
 FVector ABoidObject::DontGetEaten()

@@ -7,22 +7,26 @@ Note to self: Do NOT make this touch any engine state - it will end VERY, VERY P
 Basically this just asks the CPU "How much time have we wasted this time"? 
 
 Another big problem: This code is *NON-PORTABLE!* 
-Sorry if you use linux, I was bored. You can use getticks_ns though (this is left as an exercise to you :D) 
+Sorry if you use linux, I was bored. You can use getticks_ns though on linux (this is left as an exercise to you :D) 
 */
-
-Windows::LARGE_INTEGER cycles; 
+#if PLATFORM_WINDOWS
+	LARGE_INTEGER cycles; 
+#endif
 
 void GameProfiler_Init()
 { 
-	Windows::QueryPerformanceCounter(&cycles);
+#if PLATFORM_WINDOWS
+
+	QueryPerformanceFrequency(&cycles);
+#endif
 }
 
 float GameProfiler_GetMilliseconds()
 {
+#if PLATFORM_WINDOWS
 	Windows::LARGE_INTEGER now;
-
 	Windows::QueryPerformanceCounter(&now);
-	
 	return (float)(1000.0f * now.QuadPart) / cycles.QuadPart;
+#endif
 
 }
